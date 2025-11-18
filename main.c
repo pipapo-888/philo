@@ -6,26 +6,26 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2025/11/08 18:01:29 by knomura          ###   ########.fr       */
+/*   Updated: 2025/11/18 22:23:17 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
-typedef struct s_rule
-{
-	int	number_of_philo;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	number_of_times_each_philo_eat;
-}		t_rule;
+#include "philo.h"
 
-int	ft_atoi(char *str)
+typedef struct s_philo
 {
-	int	i;
-	int	res;
+	int id;
+	pthread_t thread;
+} t_philo;
+
+int ft_atoi(char *str)
+{
+	int i;
+	int res;
 
 	i = 0;
 	res = 0;
@@ -42,7 +42,7 @@ int	ft_atoi(char *str)
 	return (res);
 }
 
-void	insert_value(t_rule *rule, int ac, char **argv)
+void insert_value(t_rule *rule, int ac, char **argv)
 {
 	rule->number_of_philo = ft_atoi(argv[1]);
 	rule->time_to_die = ft_atoi(argv[2]);
@@ -52,18 +52,30 @@ void	insert_value(t_rule *rule, int ac, char **argv)
 		rule->number_of_times_each_philo_eat = ft_atoi(argv[5]);
 }
 
-int	main(int argc, char **argv)
+void make_thread(t_rule *rule)
 {
-	t_rule	rule;
+	t_philo philos[rule->number_of_philo];
+	int i = 0;
+	while (i < rule->number_of_philo)
+	{
+		pthread_create(philos[i].thread, )
+
+		i++;
+	}
+}
+
+int main(int argc, char **argv)
+{
+	t_rule rule;
 
 	if (argc != 5 && argc != 6)
-	{
-		printf("dame");
 		return (0);
-	}
+
 	insert_value(&rule, argc - 1, argv);
+	make_thread(&rule);
+
 	printf("%d %d %d %d", rule.number_of_philo, rule.time_to_die,
-		rule.time_to_eat, rule.time_to_sleep);
+		   rule.time_to_eat, rule.time_to_sleep);
 	if (argc == 6)
 		printf(" %d", rule.number_of_times_each_philo_eat);
 	return (0);
