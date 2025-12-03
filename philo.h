@@ -10,4 +10,10 @@ typedef struct s_rule
 	int number_of_times_each_philo_eat;
 } t_rule;
 
+typedef struct s_philo
+{
+	int id;
+	pthread_t thread;
+} t_philo;
+
 #endif

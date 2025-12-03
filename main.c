@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2025/12/02 22:06:18 by knomura          ###   ########.fr       */
+/*   Updated: 2025/12/03 22:49:59 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,6 @@
 #include <pthread.h>
 
 #include "philo.h"
-
-typedef struct s_philo
-{
-	int id;
-	pthread_t thread;
-} t_philo;
 
 int ft_atoi(char *str)
 {
@@ -42,7 +36,7 @@ int ft_atoi(char *str)
 	return (res);
 }
 
-void insert_value(t_rule *rule, int ac, char **argv)
+void insert_rule(t_rule *rule, int ac, char **argv)
 {
 	rule->number_of_philo = ft_atoi(argv[1]);
 	rule->time_to_die = ft_atoi(argv[2]);
@@ -50,6 +44,8 @@ void insert_value(t_rule *rule, int ac, char **argv)
 	rule->time_to_sleep = ft_atoi(argv[4]);
 	if (ac == 5)
 		rule->number_of_times_each_philo_eat = ft_atoi(argv[5]);
+	else
+		rule->number_of_times_each_philo_eat = -1;
 }
 
 void *routine(void *arg)
@@ -81,7 +77,7 @@ int main(int argc, char **argv)
 	if (argc != 5 && argc != 6)
 		return (0);
 
-	insert_value(&rule, argc - 1, argv);
+	insert_rule(&rule, argc - 1, argv);
 	make_thread(&rule);
 
 	// printf("%d %d %d %d", rule.number_of_philo, rule.time_to_die,
