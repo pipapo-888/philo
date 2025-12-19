@@ -33,11 +33,12 @@ typedef struct s_philo
 {
 	int id;
 	pthread_t thread;
-	long start_time;
+	// long start_time;
 	long last_eat_time;
 	int meal_count;
 	pthread_mutex_t *left_fork;
-    pthread_mutex_t *right_fork;  
+    pthread_mutex_t *right_fork;
+	void *data;
 } t_philo;
 
 typedef struct s_data
@@ -91,6 +92,8 @@ void insert_rule(t_rule *rule, int ac, char **argv)
 void *routine(void *arg)
 {
 	t_philo *p = (t_philo *)arg;
+	t_data *data = p->data;
+	t_rule rule = data->rule_data;
 	// printf("this is a routine ");
 	// printf("%d %p フォーク左:%p フォーク右:%p", p->id, p->thread, p->right_fork, p->left_fork);
 	// printf(" %ld \n", time_in_ms() - p->start_time);
@@ -104,14 +107,14 @@ void *routine(void *arg)
 	{
 		pthread_mutex_lock(p->right_fork);
 		pthread_mutex_lock(p->left_fork);
-		printf("%ld %d has taken a fork\n",time_in_ms() - p->start_time, p->id);
+		printf("%ld %d has taken a fork\n",time_in_ms() - rule.start_time, p->id);
 		// usleep(食べる時間) ->　printf(寝る)　-> usleep(寝る時間)
 	}
 	else 
 	{
-		pthread_mutex_lock(p->left_fork);
 		pthread_mutex_lock(p->right_fork);
-		printf("%ld %d has taken a fork\n",time_in_ms() - p->start_time, p->id);
+		pthread_mutex_lock(p->left_fork);
+		printf("%ld %d has taken a fork\n",time_in_ms() - rule.start_time, p->id);
 	}
 	pthread_mutex_unlock(p->right_fork);
 	pthread_mutex_unlock(p->left_fork);
@@ -119,25 +122,26 @@ void *routine(void *arg)
 	return NULL;
 }
 
-void make_thread(t_rule *rule)
+void make_thread(t_data *data)
 {
-	t_philo philos[rule->number_of_philo];
-	pthread_mutex_t forks[rule->number_of_philo];
+	// t_philo philos[rule->number_of_philo];
+	pthread_mutex_t forks[data->rule_data.number_of_philo];
 
-	rule->start_time = time_in_ms();
 	int i = 0;
-	while (i < rule->number_of_philo)
+	data->rule_data.start_time = time_in_ms();
+	while (i < data->rule_data.number_of_philo)
 	{
 		pthread_mutex_init(&forks[i], NULL);
-		philos[i].id = i;
-		philos[i].right_fork = &forks[i];
-		philos[i].left_fork = &forks[(i + 1) % rule->number_of_philo];
-		philos[i].start_time = rule->start_time;
-		pthread_create(&philos[i].thread, NULL, routine, &philos[i]);
+		data->philos_data[i].id = i;
+		data->philos_data[i].right_fork = &forks[i];
+		data->philos_data[i].left_fork = &forks[(i + 1) % data->rule_data.number_of_philo];
+		// data->philos_data[i].start_time = data->rule_data.start_time;
+		data->philos_data[i].data = data;
+		pthread_create(&data->philos_data[i].thread, NULL, routine, &data->philos_data[i]);
 		i++;
 	}
-	for (i = 0; i < rule->number_of_philo; i++)
-		pthread_join(philos[i].thread, NULL);
+	for (i = 0; i < data->rule_data.number_of_philo; i++)
+		pthread_join(data->philos_data[i].thread, NULL);
 }
 
 int main(int argc, char **argv)
@@ -149,9 +153,9 @@ int main(int argc, char **argv)
 		return (0);
 
 	insert_rule(&data.rule_data, argc - 1, argv);
+	data.philos_data = malloc(sizeof(t_philo) * data.rule_data.number_of_philo);
 	
-	make_thread(&data.rule_data);
-
+	make_thread(&data);
 
 
 
