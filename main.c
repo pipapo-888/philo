@@ -54,7 +54,7 @@ long time_in_ms(void)
 	gettimeofday(&time, NULL);
 	long start = time.tv_sec * 1000000 + time.tv_usec;
 
-	return (start);
+	return (start / 1000);
 }
 
 int ft_atoi(char *str)
@@ -103,22 +103,36 @@ void *routine(void *arg)
 	// pthread_mutex_lock(p->left_fork);
 	// printf("%ld %d has taken a fork %d\n", time_in_ms() - p->start_time, p->id, p->id);
 
-	if (p->id % 2 == 0)
-	{
-		pthread_mutex_lock(p->right_fork);
-		pthread_mutex_lock(p->left_fork);
-		printf("%ld %d has taken a fork\n",time_in_ms() - rule.start_time, p->id);
-		// usleep(食べる時間) ->　printf(寝る)　-> usleep(寝る時間)
+	while(1) {
+		if (p->id % 2 == 0)
+		{
+			pthread_mutex_lock(p->right_fork);
+			pthread_mutex_lock(p->left_fork);
+			printf("%ld %d has taken a fork\n",time_in_ms() - rule.start_time, p->id);
+			printf("%ld %d is eating\n",time_in_ms() - rule.start_time, p->id);
+			usleep(rule.time_to_eat);
+			pthread_mutex_unlock(p->right_fork);
+			pthread_mutex_unlock(p->left_fork);
+			printf("%ld %d is sleeping\n",time_in_ms() - rule.start_time, p->id);
+			usleep(rule.time_to_sleep);
+			// usleep(食べる時間) ->　printf(寝る)　-> usleep(寝る時間)
+		}
+		else 
+		{
+			pthread_mutex_lock(p->right_fork);
+			pthread_mutex_lock(p->left_fork);
+			printf("%ld %d has taken a fork\n",time_in_ms() - rule.start_time, p->id);
+			printf("%ld %d is eating\n",time_in_ms() - rule.start_time, p->id);
+			usleep(rule.time_to_eat);
+			pthread_mutex_unlock(p->right_fork);
+			pthread_mutex_unlock(p->left_fork);
+			printf("%ld %d is sleeping\n",time_in_ms() - rule.start_time, p->id);
+			usleep(rule.time_to_sleep);
+		}
+		pthread_mutex_unlock(p->right_fork);
+		pthread_mutex_unlock(p->left_fork);
 	}
-	else 
-	{
-		pthread_mutex_lock(p->right_fork);
-		pthread_mutex_lock(p->left_fork);
-		printf("%ld %d has taken a fork\n",time_in_ms() - rule.start_time, p->id);
-	}
-	pthread_mutex_unlock(p->right_fork);
-	pthread_mutex_unlock(p->left_fork);
-
+		
 	return NULL;
 }
 
@@ -151,6 +165,8 @@ int main(int argc, char **argv)
 
 	if (argc != 5 && argc != 6)
 		return (0);
+
+	printf("start\n");
 
 	insert_rule(&data.rule_data, argc - 1, argv);
 	data.philos_data = malloc(sizeof(t_philo) * data.rule_data.number_of_philo);
