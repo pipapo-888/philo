@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2025/12/03 22:49:59 by knomura          ###   ########.fr       */
+/*   Updated: 2025/12/21 13:59:29 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,11 @@ int ft_atoi(char *str)
 void insert_rule(t_rule *rule, int ac, char **argv)
 {
 	rule->number_of_philo = ft_atoi(argv[1]);
-	rule->time_to_die = ft_atoi(argv[2]);
-	rule->time_to_eat = ft_atoi(argv[3]);
-	rule->time_to_sleep = ft_atoi(argv[4]);
+	rule->time_to_die = ft_atoi(argv[2]) * 1000;
+	rule->time_to_eat = ft_atoi(argv[3]) * 1000;
+	rule->time_to_sleep = ft_atoi(argv[4]) * 1000;
 	if (ac == 5)
-		rule->number_of_times_each_philo_eat = ft_atoi(argv[5]);
+		rule->number_of_times_each_philo_eat = ft_atoi(argv[5]) * 1000;
 	else
 		rule->number_of_times_each_philo_eat = -1;
 }
@@ -117,7 +117,7 @@ void *routine(void *arg)
 			usleep(rule.time_to_sleep);
 			// usleep(食べる時間) ->　printf(寝る)　-> usleep(寝る時間)
 		}
-		else 
+		else
 		{
 			pthread_mutex_lock(p->right_fork);
 			pthread_mutex_lock(p->left_fork);
@@ -132,7 +132,6 @@ void *routine(void *arg)
 		pthread_mutex_unlock(p->right_fork);
 		pthread_mutex_unlock(p->left_fork);
 	}
-		
 	return NULL;
 }
 
@@ -170,7 +169,7 @@ int main(int argc, char **argv)
 
 	insert_rule(&data.rule_data, argc - 1, argv);
 	data.philos_data = malloc(sizeof(t_philo) * data.rule_data.number_of_philo);
-	
+
 	make_thread(&data);
 
 
