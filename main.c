@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2025/12/21 18:49:40 by knomura          ###   ########.fr       */
+/*   Updated: 2026/03/21 17:21:34 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,7 @@ void	make_thread(t_data *data)
 		pthread_join(data->philos_data[i].thread, NULL);
 	pthread_join(data->thread, NULL);
 }
+
 
 void	insert_rule(t_rule *rule, int ac, char **argv)
 {
