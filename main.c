@@ -6,44 +6,11 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/03/21 17:21:34 by knomura          ###   ########.fr       */
+/*   Updated: 2026/03/28 18:36:53 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <unistd.h>
-
-typedef struct s_rule
-{
-	int				number_of_philo;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
-	int				number_of_times_each_philo_eat;
-	long			start_time;
-}					t_rule;
-
-typedef struct s_philo
-{
-	int				id;
-	pthread_t		thread;
-	long			last_eat_time;
-	int				meal_count;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	void			*data;
-}					t_philo;
-
-typedef struct s_data
-{
-	t_rule			rule_data;
-	t_philo			*philos_data;
-	pthread_t		thread;
-}					t_data;
 
 long	t_ms(void)
 {
@@ -190,10 +157,15 @@ int	main(int argc, char **argv)
 	t_data	data;
 
 	if (argc != 5 && argc != 6)
-		return (0);
+		return (1);
 	printf("start\n");
 	insert_rule(&data.rule_data, argc - 1, argv);
 	data.philos_data = malloc(sizeof(t_philo) * data.rule_data.number_of_philo);
+	if (!data.philos_data)
+	{
+		perror("Error:");
+		return (1);
+	}
 	make_thread(&data);
 	return (0);
 }
