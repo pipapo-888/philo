@@ -22,6 +22,7 @@ typedef struct s_philo
 	int				id;
 	pthread_t		thread;
 	long			last_eat_time;
+	pthread_mutex_t	eat_time;
 	int				meal_count;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
