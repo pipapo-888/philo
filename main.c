@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/03/29 15:40:09 by knomura          ###   ########.fr       */
+/*   Updated: 2026/03/29 17:59:05 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ long	t_ms(void)
 
 	gettimeofday(&time, NULL);
 	start = time.tv_sec * 1000000 + time.tv_usec;
-	return (start);
+	return (start / 1000);
 }
 
 int	ft_atoi(char *str)
@@ -58,8 +58,8 @@ void	*check_death(void *arg)
 			if (t_ms()
 				- data->philos_data[i].last_eat_time > data->rule_data.time_to_die)
 			{
-				printf("%ld %d died\n", (t_ms() - data->rule_data.start_time)
-					/ 1000, data->philos_data[i].id);
+				printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
+					data->philos_data[i].id);
 				return (NULL);
 			}
 		}
@@ -81,44 +81,44 @@ void	*routine(void *arg)
 		if (p->id % 2 == 0)
 		{
 			pthread_mutex_lock(p->right_fork);
-			pthread_mutex_lock(p->left_fork);
-			printf("%ld %d has taken a fork\n", (t_ms() - rule.start_time)
-				/ 1000, p->id);
-			printf("%ld %d is eating\n", (t_ms() - rule.start_time) / 1000,
+			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				p->id);
-			usleep(rule.time_to_eat);
+			pthread_mutex_lock(p->left_fork);
+			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
+				p->id);
+			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
+			p->last_eat_time = t_ms();
+			usleep(rule.time_to_eat * 1000);
 			p->last_eat_time = t_ms();
 			pthread_mutex_unlock(p->right_fork);
 			pthread_mutex_unlock(p->left_fork);
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
 				return (NULL);
-			printf("%ld %d is sleeping\n", (t_ms() - rule.start_time) / 1000,
-				p->id);
-			usleep(rule.time_to_sleep);
-			printf("%ld %d is thinking\n", (t_ms() - rule.start_time) / 1000,
-				p->id);
+			printf("%ld %d is sleeping\n", t_ms() - rule.start_time, p->id);
+			usleep(rule.time_to_sleep * 1000);
+			printf("%ld %d is thinking\n", t_ms() - rule.start_time, p->id);
 		}
 		else
 		{
 			pthread_mutex_lock(p->left_fork);
-			pthread_mutex_lock(p->right_fork);
-			printf("%ld %d has taken a fork\n", (t_ms() - rule.start_time)
-				/ 1000, p->id);
-			printf("%ld %d is eating\n", (t_ms() - rule.start_time) / 1000,
+			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				p->id);
-			usleep(rule.time_to_eat);
+			pthread_mutex_lock(p->right_fork);
+			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
+				p->id);
+			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
+			p->last_eat_time = t_ms();
+			usleep(rule.time_to_eat * 1000);
 			p->last_eat_time = t_ms();
 			pthread_mutex_unlock(p->right_fork);
 			pthread_mutex_unlock(p->left_fork);
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
 				return (NULL);
-			printf("%ld %d is sleeping\n", (t_ms() - rule.start_time) / 1000,
-				p->id);
-			usleep(rule.time_to_sleep);
-			printf("%ld %d is thinking\n", (t_ms() - rule.start_time) / 1000,
-				p->id);
+			printf("%ld %d is sleeping\n", t_ms() - rule.start_time, p->id);
+			usleep(rule.time_to_sleep * 1000);
+			printf("%ld %d is thinking\n", t_ms() - rule.start_time, p->id);
 		}
 	}
 	return (NULL);
@@ -134,7 +134,7 @@ void	make_thread(t_data *data)
 	while (i < data->rule_data.number_of_philo)
 	{
 		pthread_mutex_init(&forks[i], NULL);
-		data->philos_data[i].id = i;
+		data->philos_data[i].id = i + 1;
 		data->philos_data[i].right_fork = &forks[i];
 		data->philos_data[i].left_fork = &forks[(i + 1)
 			% data->rule_data.number_of_philo];
@@ -154,9 +154,9 @@ void	make_thread(t_data *data)
 void	insert_rule(t_rule *rule, int ac, char **argv)
 {
 	rule->number_of_philo = ft_atoi(argv[1]);
-	rule->time_to_die = ft_atoi(argv[2]) * 1000;
-	rule->time_to_eat = ft_atoi(argv[3]) * 1000;
-	rule->time_to_sleep = ft_atoi(argv[4]) * 1000;
+	rule->time_to_die = ft_atoi(argv[2]);
+	rule->time_to_eat = ft_atoi(argv[3]);
+	rule->time_to_sleep = ft_atoi(argv[4]);
 	if (ac == 5)
 		rule->number_of_times_each_philo_eat = ft_atoi(argv[5]);
 	else
