@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/03/28 18:36:53 by knomura          ###   ########.fr       */
+/*   Updated: 2026/03/29 15:40:09 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ long	t_ms(void)
 
 	gettimeofday(&time, NULL);
 	start = time.tv_sec * 1000000 + time.tv_usec;
-	return (start / 1000);
+	return (start);
 }
 
 int	ft_atoi(char *str)
@@ -51,10 +51,15 @@ void	*check_death(void *arg)
 	{
 		for (int i = 0; i < data->rule_data.number_of_philo; i++)
 		{
+			// printf("checking %d philo last eat time\n", i);
+			// printf("%ld > %d\n", (t_ms()
+			// - data->philos_data[i].last_eat_time )/ 1000,
+			// data->rule_data.time_to_die / 1000);
 			if (t_ms()
 				- data->philos_data[i].last_eat_time > data->rule_data.time_to_die)
 			{
-				printf("%ld %d died\n", t_ms() - data->rule_data.start_time, data->philos_data[i].id);
+				printf("%ld %d died\n", (t_ms() - data->rule_data.start_time)
+					/ 1000, data->philos_data[i].id);
 				return (NULL);
 			}
 		}
@@ -77,9 +82,10 @@ void	*routine(void *arg)
 		{
 			pthread_mutex_lock(p->right_fork);
 			pthread_mutex_lock(p->left_fork);
-			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
+			printf("%ld %d has taken a fork\n", (t_ms() - rule.start_time)
+				/ 1000, p->id);
+			printf("%ld %d is eating\n", (t_ms() - rule.start_time) / 1000,
 				p->id);
-			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
 			usleep(rule.time_to_eat);
 			p->last_eat_time = t_ms();
 			pthread_mutex_unlock(p->right_fork);
@@ -87,17 +93,20 @@ void	*routine(void *arg)
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
 				return (NULL);
-			printf("%ld %d is sleeping\n", t_ms() - rule.start_time, p->id);
+			printf("%ld %d is sleeping\n", (t_ms() - rule.start_time) / 1000,
+				p->id);
 			usleep(rule.time_to_sleep);
-			printf("%ld %d is thinking\n", t_ms() - rule.start_time, p->id);
+			printf("%ld %d is thinking\n", (t_ms() - rule.start_time) / 1000,
+				p->id);
 		}
 		else
 		{
 			pthread_mutex_lock(p->left_fork);
 			pthread_mutex_lock(p->right_fork);
-			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
+			printf("%ld %d has taken a fork\n", (t_ms() - rule.start_time)
+				/ 1000, p->id);
+			printf("%ld %d is eating\n", (t_ms() - rule.start_time) / 1000,
 				p->id);
-			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
 			usleep(rule.time_to_eat);
 			p->last_eat_time = t_ms();
 			pthread_mutex_unlock(p->right_fork);
@@ -105,9 +114,11 @@ void	*routine(void *arg)
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
 				return (NULL);
-			printf("%ld %d is sleeping\n", t_ms() - rule.start_time, p->id);
+			printf("%ld %d is sleeping\n", (t_ms() - rule.start_time) / 1000,
+				p->id);
 			usleep(rule.time_to_sleep);
-			printf("%ld %d is thinking\n", t_ms() - rule.start_time, p->id);
+			printf("%ld %d is thinking\n", (t_ms() - rule.start_time) / 1000,
+				p->id);
 		}
 	}
 	return (NULL);
@@ -134,11 +145,11 @@ void	make_thread(t_data *data)
 		i++;
 	}
 	pthread_create(&data->thread, NULL, check_death, data);
+	pthread_join(data->thread, NULL);
+	return ;
 	for (i = 0; i < data->rule_data.number_of_philo; i++)
 		pthread_join(data->philos_data[i].thread, NULL);
-	pthread_join(data->thread, NULL);
 }
-
 
 void	insert_rule(t_rule *rule, int ac, char **argv)
 {
