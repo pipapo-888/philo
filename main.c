@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/03/29 17:59:05 by knomura          ###   ########.fr       */
+/*   Updated: 2026/03/29 19:45:55 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,16 @@ void	*check_death(void *arg)
 			// printf("%ld > %d\n", (t_ms()
 			// - data->philos_data[i].last_eat_time )/ 1000,
 			// data->rule_data.time_to_die / 1000);
+			pthread_mutex_lock(&data->philos_data[i].eat_time);
 			if (t_ms()
 				- data->philos_data[i].last_eat_time > data->rule_data.time_to_die)
 			{
 				printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
 					data->philos_data[i].id);
+				pthread_mutex_unlock(&data->philos_data[i].eat_time);
 				return (NULL);
 			}
+			pthread_mutex_unlock(&data->philos_data[i].eat_time);
 		}
 		usleep(100);
 	}
@@ -87,9 +90,13 @@ void	*routine(void *arg)
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				p->id);
 			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
+			pthread_mutex_lock(&p->eat_time);
 			p->last_eat_time = t_ms();
+			pthread_mutex_unlock(&p->eat_time);
 			usleep(rule.time_to_eat * 1000);
+			pthread_mutex_lock(&p->eat_time);
 			p->last_eat_time = t_ms();
+			pthread_mutex_unlock(&p->eat_time);
 			pthread_mutex_unlock(p->right_fork);
 			pthread_mutex_unlock(p->left_fork);
 			p->meal_count++;
@@ -108,9 +115,13 @@ void	*routine(void *arg)
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				p->id);
 			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
+			pthread_mutex_lock(&p->eat_time);
 			p->last_eat_time = t_ms();
+			pthread_mutex_unlock(&p->eat_time);
 			usleep(rule.time_to_eat * 1000);
+			pthread_mutex_lock(&p->eat_time);
 			p->last_eat_time = t_ms();
+			pthread_mutex_unlock(&p->eat_time);
 			pthread_mutex_unlock(p->right_fork);
 			pthread_mutex_unlock(p->left_fork);
 			p->meal_count++;
