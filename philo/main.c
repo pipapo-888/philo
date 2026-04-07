@@ -6,41 +6,11 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/06 01:11:42 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/07 15:14:22 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-long	t_ms(void)
-{
-	struct timeval	time;
-	long			start;
-
-	gettimeofday(&time, NULL);
-	start = time.tv_sec * 1000000 + time.tv_usec;
-	return (start / 1000);
-}
-
-int	ft_atoi(char *str)
-{
-	int	i;
-	int	res;
-
-	i = 0;
-	res = 0;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		res = res * 10 + (str[i] - '0');
-		i++;
-	}
-	if (res <= 0)
-	{
-		printf("Error: Please enter a positive integer.\n");
-		exit(1);
-	}
-	return (res);
-}
 
 void	*check_death(void *arg)
 {
