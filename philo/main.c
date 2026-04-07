@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/07 19:31:53 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/07 19:42:58 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,10 @@ void *routine(void *arg)
 			pthread_mutex_unlock(p->left_fork);
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
+			{
+				printf("確認\n");
 				return (NULL);
+			}
 			if (is_dead(data))
 				return (NULL);
 			printf("%ld %d is sleeping\n", t_ms() - rule.start_time, p->id);
@@ -130,7 +133,10 @@ void *routine(void *arg)
 			pthread_mutex_unlock(p->right_fork);
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
+			{
+				printf("確認\n");
 				return (NULL);
+			}
 			if (is_dead(data))
 				return (NULL);
 			printf("%ld %d is sleeping\n", t_ms() - rule.start_time, p->id);
