@@ -24,4 +24,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+san:
+	$(CC) $(CFLAGS) -fsanitize=thread -g $(SRCS) -lpthread -o $(NAME)_san
+
+.PHONY: all clean fclean re san
