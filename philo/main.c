@@ -30,6 +30,8 @@ void *check_death(void *arg)
 				pthread_mutex_lock(&data->death_flag_mtx);
 				data->death_flag = 1;
 				pthread_mutex_unlock(&data->death_flag_mtx);
+				printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
+				data->philos_data[i].id);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data->philos_data[i].eat_time);
