@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/07 18:59:05 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/07 19:31:53 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ void *check_death(void *arg)
 			pthread_mutex_lock(&data->philos_data[i].eat_time);
 			if (t_ms() - data->philos_data[i].last_eat_time > data->rule_data.time_to_die)
 			{
-				printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
-					   data->philos_data[i].id);
 				pthread_mutex_unlock(&data->philos_data[i].eat_time);
 				pthread_mutex_lock(&data->death_flag_mtx);
 				data->death_flag = 1;
@@ -64,9 +62,20 @@ void *routine(void *arg)
 		if (p->id % 2 == 0)
 		{
 			pthread_mutex_lock(p->right_fork);
+			if (is_dead(data))
+			{
+				pthread_mutex_unlock(p->right_fork);
+				return (NULL);
+			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				   p->id);
 			pthread_mutex_lock(p->left_fork);
+			if (is_dead(data))
+			{
+				pthread_mutex_unlock(p->right_fork);
+				pthread_mutex_unlock(p->left_fork);
+				return (NULL);
+			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				   p->id);
 			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
@@ -93,9 +102,20 @@ void *routine(void *arg)
 		else
 		{
 			pthread_mutex_lock(p->left_fork);
+			if (is_dead(data))
+			{
+				pthread_mutex_unlock(p->left_fork);
+				return (NULL);
+			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				   p->id);
 			pthread_mutex_lock(p->right_fork);
+			if (is_dead(data))
+			{
+				pthread_mutex_unlock(p->left_fork);
+				pthread_mutex_unlock(p->right_fork);
+				return (NULL);
+			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
 				   p->id);
 			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
@@ -138,6 +158,22 @@ void destroy_forks_and_exit(t_data *data, int count, int status)
 	exit(status);
 }
 
+void clean_all(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->rule_data.number_of_philo)
+	{
+		pthread_mutex_destroy(&data->forks[i]);
+		pthread_mutex_destroy(&data->philos_data[i].eat_time);
+		i++;
+	}
+	pthread_mutex_destroy(&data->death_flag_mtx);
+	free(data->forks);
+	free(data->philos_data);
+}
+
 void make_thread(t_data *data)
 {
 	int i;
@@ -172,6 +208,7 @@ void make_thread(t_data *data)
 	// return ;
 	for (i = 0; i < data->rule_data.number_of_philo; i++)
 		pthread_join(data->philos_data[i].thread, NULL);
+	clean_all(data);
 }
 
 void insert_rule(t_rule *rule, int ac, char **argv)
