@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/07 17:19:00 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/07 17:58:23 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ void	*check_death(void *arg)
 				printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
 					data->philos_data[i].id);
 				pthread_mutex_unlock(&data->philos_data[i].eat_time);
+				pthread_mutex_lock(&data->death_flag_mtx);
+				data->death_flag = 1;
+				pthread_mutex_unlock(&data->death_flag_mtx);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data->philos_data[i].eat_time);
@@ -148,10 +151,10 @@ void	make_thread(t_data *data)
 		i++;
 	}
 	pthread_create(&data->thread, NULL, check_death, data);
-	// pthread_join(data->thread, NULL);
+	pthread_join(data->thread, NULL);
 	// return ;
-	// for (i = 0; i < data->rule_data.number_of_philo; i++)
-	// 	pthread_join(data->philos_data[i].thread, NULL);
+	for (i = 0; i < data->rule_data.number_of_philo; i++)
+		pthread_join(data->philos_data[i].thread, NULL);
 }
 
 void	insert_rule(t_rule *rule, int ac, char **argv)
@@ -171,7 +174,7 @@ int	main(int argc, char **argv)
 	t_data	data;
 
 	if (argc != 5 && argc != 6)
-		return (1);
+	return (1);
 	printf("start\n");
 	insert_rule(&data.rule_data, argc - 1, argv);
 	data.philos_data = malloc(sizeof(t_philo) * data.rule_data.number_of_philo);
@@ -180,6 +183,7 @@ int	main(int argc, char **argv)
 		write(2, "Error: malloc failed\n", 21);
 		return (1);
 	}
+	data.death_flag = 0;
 	make_thread(&data);
 	return (0);
 }

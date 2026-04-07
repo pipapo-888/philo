@@ -35,6 +35,8 @@ typedef struct s_data
 	t_philo			*philos_data;
 	pthread_mutex_t	*forks;
 	pthread_t		thread;
+	int				death_flag;
+	pthread_mutex_t	death_flag_mtx;
 }					t_data;
 
 long	t_ms(void);
