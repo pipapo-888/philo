@@ -36,4 +36,7 @@ typedef struct s_data
 	pthread_t		thread;
 }					t_data;
 
+long	t_ms(void);
+int		ft_atoi(char *str);
+
 #endif

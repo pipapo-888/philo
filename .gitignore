@@ -1,2 +1,4 @@
 a.out
 test
+philo/philo
+philo/*.o
