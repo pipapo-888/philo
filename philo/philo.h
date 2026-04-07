@@ -33,6 +33,7 @@ typedef struct s_data
 {
 	t_rule			rule_data;
 	t_philo			*philos_data;
+	pthread_mutex_t	*forks;
 	pthread_t		thread;
 }					t_data;
 
