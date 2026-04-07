@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/07 17:58:23 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/07 18:34:40 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,12 +159,12 @@ void	make_thread(t_data *data)
 
 void	insert_rule(t_rule *rule, int ac, char **argv)
 {
-	rule->number_of_philo = ft_atoi(argv[1]);
-	rule->time_to_die = ft_atoi(argv[2]);
-	rule->time_to_eat = ft_atoi(argv[3]);
-	rule->time_to_sleep = ft_atoi(argv[4]);
-	if (ac == 5)
-		rule->number_of_times_each_philo_eat = ft_atoi(argv[5]);
+	rule->number_of_philo = ft_atoi(argv[2]);
+	rule->time_to_die = ft_atoi(argv[3]);
+	rule->time_to_eat = ft_atoi(argv[4]);
+	rule->time_to_sleep = ft_atoi(argv[5]);
+	if (ac == 6)
+		rule->number_of_times_each_philo_eat = ft_atoi(argv[6]);
 	else
 		rule->number_of_times_each_philo_eat = -1;
 }
@@ -176,7 +176,7 @@ int	main(int argc, char **argv)
 	if (argc != 5 && argc != 6)
 	return (1);
 	printf("start\n");
-	insert_rule(&data.rule_data, argc - 1, argv);
+	insert_rule(&data.rule_data, argc, argv);
 	data.philos_data = malloc(sizeof(t_philo) * data.rule_data.number_of_philo);
 	if (!data.philos_data)
 	{
