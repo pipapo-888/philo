@@ -1,4 +1,2 @@
 *This project has been created as part of the 42 curriculum by knomura.*
 
-[ ]飯食う時間が　死亡までの時間より長いケース
-[ ] is_running フラグを追加して routine を終了できるようにする（check_death が死亡検知したら is_running=0 → while(is_running) で全スレッド終了 → pthread_join で回収）
