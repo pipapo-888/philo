@@ -6,14 +6,13 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/09 14:35:20 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/09 14:58:27 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-
-int init_data(t_data *data)
+int	init_data(t_data *data)
 {
 	int	ret;
 
@@ -21,7 +20,7 @@ int init_data(t_data *data)
 	data->all_ate_count = 0;
 	ret = pthread_mutex_init(&data->death_flag_mtx, NULL);
 	if (ret)
-		return (write(2, "Error: mutex init failed\n", 25),ret);
+		return (write(2, "Error: mutex init failed\n", 25), ret);
 	ret = pthread_mutex_init(&data->all_ate_mtx, NULL);
 	if (ret)
 	{
@@ -29,7 +28,8 @@ int init_data(t_data *data)
 		write(2, "Error: mutex init failed\n", 25);
 		return (ret);
 	}
-	data->philos_data = malloc(sizeof(t_philo) * data->rule_data.number_of_philo);
+	data->philos_data = malloc(sizeof(t_philo)
+			* data->rule_data.number_of_philo);
 	if (!data->philos_data)
 	{
 		pthread_mutex_destroy(&data->death_flag_mtx);
@@ -40,8 +40,7 @@ int init_data(t_data *data)
 	return (0);
 }
 
-
-void insert_rule(t_rule *rule, int ac, char **argv)
+void	insert_rule(t_rule *rule, int ac, char **argv)
 {
 	rule->number_of_philo = ft_atoi(argv[1]);
 	rule->time_to_die = ft_atoi(argv[2]);
@@ -53,10 +52,10 @@ void insert_rule(t_rule *rule, int ac, char **argv)
 		rule->number_of_times_each_philo_eat = -1;
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_data data;
-	int ret;
+	t_data	data;
+	int		ret;
 
 	if (argc != 5 && argc != 6)
 		return (0);

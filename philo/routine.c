@@ -1,8 +1,8 @@
 #include "philo.h"
 
-static int is_dead(t_data *data)
+static int	is_dead(t_data *data)
 {
-	int flag;
+	int	flag;
 
 	pthread_mutex_lock(&data->death_flag_mtx);
 	flag = data->death_flag;
@@ -10,9 +10,9 @@ static int is_dead(t_data *data)
 	return (flag);
 }
 
-static int is_all_ate(t_data *data)
+static int	is_all_ate(t_data *data)
 {
-	int count;
+	int	count;
 
 	pthread_mutex_lock(&data->all_ate_mtx);
 	count = data->all_ate_count;
@@ -20,9 +20,9 @@ static int is_all_ate(t_data *data)
 	return (count == data->rule_data.number_of_philo);
 }
 
-void *check_death(void *arg)
+void	*check_death(void *arg)
 {
-	t_data *data;
+	t_data	*data;
 
 	data = (t_data *)arg;
 	while (!is_all_ate(data))
@@ -30,14 +30,15 @@ void *check_death(void *arg)
 		for (int i = 0; i < data->rule_data.number_of_philo; i++)
 		{
 			pthread_mutex_lock(&data->philos_data[i].eat_time);
-			if (t_ms() - data->philos_data[i].last_eat_time > data->rule_data.time_to_die)
+			if (t_ms()
+				- data->philos_data[i].last_eat_time > data->rule_data.time_to_die)
 			{
 				pthread_mutex_unlock(&data->philos_data[i].eat_time);
 				pthread_mutex_lock(&data->death_flag_mtx);
 				data->death_flag = 1;
 				pthread_mutex_unlock(&data->death_flag_mtx);
 				printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
-				data->philos_data[i].id);
+					data->philos_data[i].id);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data->philos_data[i].eat_time);
@@ -47,11 +48,11 @@ void *check_death(void *arg)
 	return (NULL);
 }
 
-void *routine(void *arg)
+void	*routine(void *arg)
 {
-	t_philo *p;
-	t_data *data;
-	t_rule rule;
+	t_philo	*p;
+	t_data	*data;
+	t_rule	rule;
 
 	p = (t_philo *)arg;
 	data = p->data;
@@ -67,7 +68,7 @@ void *routine(void *arg)
 				return (NULL);
 			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
-				   p->id);
+				p->id);
 			pthread_mutex_lock(p->left_fork);
 			if (is_dead(data))
 			{
@@ -76,7 +77,7 @@ void *routine(void *arg)
 				return (NULL);
 			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
-				   p->id);
+				p->id);
 			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
 			pthread_mutex_lock(&p->eat_time);
 			p->last_eat_time = t_ms();
@@ -112,7 +113,7 @@ void *routine(void *arg)
 				return (NULL);
 			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
-				   p->id);
+				p->id);
 			pthread_mutex_lock(p->right_fork);
 			if (is_dead(data))
 			{
@@ -121,7 +122,7 @@ void *routine(void *arg)
 				return (NULL);
 			}
 			printf("%ld %d has taken a fork\n", t_ms() - rule.start_time,
-				   p->id);
+				p->id);
 			printf("%ld %d is eating\n", t_ms() - rule.start_time, p->id);
 			pthread_mutex_lock(&p->eat_time);
 			p->last_eat_time = t_ms();

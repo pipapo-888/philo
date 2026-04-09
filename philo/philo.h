@@ -1,11 +1,11 @@
 #ifndef PHILO_H
-#define PHILO_H
+# define PHILO_H
 
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <unistd.h>
+# include <pthread.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <unistd.h>
 
 typedef struct s_rule
 {
@@ -41,11 +41,11 @@ typedef struct s_data
 	pthread_mutex_t	all_ate_mtx;
 }					t_data;
 
-long	t_ms(void);
-int		ft_atoi(char *str);
-int		init_data(t_data *data);
-void	*check_death(void *arg);
-void	*routine(void *arg);
-void	make_thread(t_data *data);
+long				t_ms(void);
+int					ft_atoi(char *str);
+int					init_data(t_data *data);
+void				*check_death(void *arg);
+void				*routine(void *arg);
+void				make_thread(t_data *data);
 
 #endif
