@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/09 17:12:06 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/09 18:39:18 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,22 +66,12 @@ static void	clean_all(t_data *data)
 	free(data->philos_data);
 }
 
-int	make_thread(t_data *data)
+static int	create_routine_threads(t_data *data)
 {
 	int	i;
 	int	ret;
 
-	data->forks = malloc(sizeof(pthread_mutex_t)
-			* data->rule_data.number_of_philo);
-	if (!data->forks)
-	{
-		pthread_mutex_destroy(&data->death_flag_mtx);
-		pthread_mutex_destroy(&data->all_ate_mtx);
-		free(data->philos_data);
-		return (1);
-	}
 	i = 0;
-	data->rule_data.start_time = t_ms();
 	while (i < data->rule_data.number_of_philo)
 	{
 		ret = pthread_mutex_init(&data->forks[i], NULL);
@@ -102,6 +92,26 @@ int	make_thread(t_data *data)
 			return (destroy_forks(data, i + 1, i + 1, ret));
 		i++;
 	}
+	return (0);
+}
+
+int	make_thread(t_data *data)
+{
+	int	ret;
+
+	data->forks = malloc(sizeof(pthread_mutex_t)
+		* data->rule_data.number_of_philo);
+	if (!data->forks)
+	{
+		pthread_mutex_destroy(&data->death_flag_mtx);
+		pthread_mutex_destroy(&data->all_ate_mtx);
+		free(data->philos_data);
+		return (1);
+	}
+	data->rule_data.start_time = t_ms();
+	ret = create_routine_threads(data);
+	if (ret)
+		return (ret);
 	pthread_create(&data->thread, NULL, check_death, data);
 	join_all_threads(data);
 	clean_all(data);
