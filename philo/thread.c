@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/09 18:39:18 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/09 18:47:02 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	make_thread(t_data *data)
 	int	ret;
 
 	data->forks = malloc(sizeof(pthread_mutex_t)
-		* data->rule_data.number_of_philo);
+			* data->rule_data.number_of_philo);
 	if (!data->forks)
 	{
 		pthread_mutex_destroy(&data->death_flag_mtx);
