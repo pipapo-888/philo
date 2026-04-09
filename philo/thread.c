@@ -1,6 +1,6 @@
 #include "philo.h"
 
-void destroy_forks_and_exit(t_data *data, int count, int status)
+static void destroy_forks_and_exit(t_data *data, int count, int status)
 {
 	int i;
 
@@ -15,7 +15,7 @@ void destroy_forks_and_exit(t_data *data, int count, int status)
 	exit(status);
 }
 
-void clean_all(t_data *data)
+static void clean_all(t_data *data)
 {
 	int	i;
 

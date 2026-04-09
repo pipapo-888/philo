@@ -44,12 +44,8 @@ typedef struct s_data
 long	t_ms(void);
 int		ft_atoi(char *str);
 int		init_data(t_data *data);
-int		is_dead(t_data *data);
-int		is_all_ate(t_data *data);
 void	*check_death(void *arg);
 void	*routine(void *arg);
-void	destroy_forks_and_exit(t_data *data, int count, int status);
-void	clean_all(t_data *data);
 void	make_thread(t_data *data);
 
 #endif

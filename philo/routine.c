@@ -1,6 +1,6 @@
 #include "philo.h"
 
-int is_dead(t_data *data)
+static int is_dead(t_data *data)
 {
 	int flag;
 
@@ -10,7 +10,7 @@ int is_dead(t_data *data)
 	return (flag);
 }
 
-int is_all_ate(t_data *data)
+static int is_all_ate(t_data *data)
 {
 	int count;
 
