@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 15:14:28 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/09 16:33:36 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/09 16:40:43 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	ft_atoi(char *str)
 	if (res <= 0)
 	{
 		printf("Error: Please enter a positive integer.\n");
-		exit(1);
+		return (-1);
 	}
 	return (res);
 }

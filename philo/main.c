@@ -40,16 +40,24 @@ int	init_data(t_data *data)
 	return (0);
 }
 
-void	insert_rule(t_rule *rule, int ac, char **argv)
+int	insert_rule(t_rule *rule, int ac, char **argv)
 {
 	rule->number_of_philo = ft_atoi(argv[1]);
 	rule->time_to_die = ft_atoi(argv[2]);
 	rule->time_to_eat = ft_atoi(argv[3]);
 	rule->time_to_sleep = ft_atoi(argv[4]);
+	if (rule->number_of_philo == -1 || rule->time_to_die == -1
+		|| rule->time_to_eat == -1 || rule->time_to_sleep == -1)
+		return (-1);
 	if (ac == 6)
+	{
 		rule->number_of_times_each_philo_eat = ft_atoi(argv[5]);
+		if (rule->number_of_times_each_philo_eat == -1)
+			return (-1);
+	}
 	else
 		rule->number_of_times_each_philo_eat = -1;
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -59,10 +67,10 @@ int	main(int argc, char **argv)
 
 	if (argc != 5 && argc != 6)
 		return (0);
-	insert_rule(&data.rule_data, argc, argv);
+	if (insert_rule(&data.rule_data, argc, argv) == -1)
+		return (1);
 	ret = init_data(&data);
 	if (ret)
 		return (ret);
-	make_thread(&data);
-	return (0);
+	return (make_thread(&data));
 }

@@ -55,9 +55,10 @@ typedef struct s_data
 
 long				t_ms(void);
 int					ft_atoi(char *str);
+int					insert_rule(t_rule *rule, int ac, char **argv);
 int					init_data(t_data *data);
 void				*check_death(void *arg);
 void				*routine(void *arg);
-void				make_thread(t_data *data);
+int					make_thread(t_data *data);
 
 #endif
