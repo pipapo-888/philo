@@ -65,7 +65,12 @@ void	make_thread(t_data *data)
 	}
 	pthread_create(&data->thread, NULL, check_death, data);
 	pthread_join(data->thread, NULL);
-	for (i = 0; i < data->rule_data.number_of_philo; i++)
+	
+	i = 0;
+	while (i < data->rule_data.number_of_philo)
+	{
 		pthread_join(data->philos_data[i].thread, NULL);
+		i++;
+	}
 	clean_all(data);
 }

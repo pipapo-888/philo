@@ -23,11 +23,13 @@ static int	is_all_ate(t_data *data)
 void	*check_death(void *arg)
 {
 	t_data	*data;
+	int		i;
 
 	data = (t_data *)arg;
 	while (!is_all_ate(data))
 	{
-		for (int i = 0; i < data->rule_data.number_of_philo; i++)
+		i = 0;
+		while (i < data->rule_data.number_of_philo)
 		{
 			pthread_mutex_lock(&data->philos_data[i].eat_time);
 			if (t_ms()
@@ -42,6 +44,7 @@ void	*check_death(void *arg)
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data->philos_data[i].eat_time);
+			i++;
 		}
 		usleep(100);
 	}
