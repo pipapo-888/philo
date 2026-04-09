@@ -36,6 +36,19 @@ static int	destroy_forks(t_data *data, int fork_count, int eat_count,
 	return (status);
 }
 
+static void	join_all_threads(t_data *data)
+{
+	int	i;
+
+	pthread_join(data->thread, NULL);
+	i = 0;
+	while (i < data->rule_data.number_of_philo)
+	{
+		pthread_join(data->philos_data[i].thread, NULL);
+		i++;
+	}
+}
+
 static void	clean_all(t_data *data)
 {
 	int	i;
@@ -90,13 +103,7 @@ int	make_thread(t_data *data)
 		i++;
 	}
 	pthread_create(&data->thread, NULL, check_death, data);
-	pthread_join(data->thread, NULL);
-	i = 0;
-	while (i < data->rule_data.number_of_philo)
-	{
-		pthread_join(data->philos_data[i].thread, NULL);
-		i++;
-	}
+	join_all_threads(data);
 	clean_all(data);
 	return (0);
 }
