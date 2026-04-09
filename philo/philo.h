@@ -37,9 +37,12 @@ typedef struct s_data
 	pthread_t		thread;
 	int				death_flag;
 	pthread_mutex_t	death_flag_mtx;
+	int				all_ate_count;
+	pthread_mutex_t	all_ate_mtx;
 }					t_data;
 
 long	t_ms(void);
 int		ft_atoi(char *str);
+int		init_data(t_data *data);
 
 #endif

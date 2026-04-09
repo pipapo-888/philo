@@ -6,18 +6,38 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/07 19:42:58 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/09 14:19:48 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int is_dead(t_data *data)
+{
+	int flag;
+
+	pthread_mutex_lock(&data->death_flag_mtx);
+	flag = data->death_flag;
+	pthread_mutex_unlock(&data->death_flag_mtx);
+	return (flag);
+}
+
+int is_all_ate(t_data *data)
+{
+	int count;
+
+	pthread_mutex_lock(&data->all_ate_mtx);
+	count = data->all_ate_count;
+	pthread_mutex_unlock(&data->all_ate_mtx);
+	return (count == data->rule_data.number_of_philo);
+}
 
 void *check_death(void *arg)
 {
 	t_data *data;
 
 	data = (t_data *)arg;
-	while (1)
+	while (!is_all_ate(data))
 	{
 		for (int i = 0; i < data->rule_data.number_of_philo; i++)
 		{
@@ -36,17 +56,9 @@ void *check_death(void *arg)
 		}
 		usleep(100);
 	}
+	return (NULL);
 }
 
-int is_dead(t_data *data)
-{
-	int flag;
-
-	pthread_mutex_lock(&data->death_flag_mtx);
-	flag = data->death_flag;
-	pthread_mutex_unlock(&data->death_flag_mtx);
-	return (flag);
-}
 
 void *routine(void *arg)
 {
@@ -91,7 +103,9 @@ void *routine(void *arg)
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
 			{
-				printf("確認\n");
+				pthread_mutex_lock(&data->all_ate_mtx);
+				data->all_ate_count++;
+				pthread_mutex_unlock(&data->all_ate_mtx);
 				return (NULL);
 			}
 			if (is_dead(data))
@@ -134,7 +148,9 @@ void *routine(void *arg)
 			p->meal_count++;
 			if (p->meal_count == rule.number_of_times_each_philo_eat)
 			{
-				printf("確認\n");
+				pthread_mutex_lock(&data->all_ate_mtx);
+				data->all_ate_count++;
+				pthread_mutex_unlock(&data->all_ate_mtx);
 				return (NULL);
 			}
 			if (is_dead(data))
@@ -176,8 +192,36 @@ void clean_all(t_data *data)
 		i++;
 	}
 	pthread_mutex_destroy(&data->death_flag_mtx);
+	pthread_mutex_destroy(&data->all_ate_mtx);
 	free(data->forks);
 	free(data->philos_data);
+}
+
+int init_data(t_data *data)
+{
+	int	ret;
+
+	data->death_flag = 0;
+	data->all_ate_count = 0;
+	ret = pthread_mutex_init(&data->death_flag_mtx, NULL);
+	if (ret)
+		return (write(2, "Error: mutex init failed\n", 25),ret);
+	ret = pthread_mutex_init(&data->all_ate_mtx, NULL);
+	if (ret)
+	{
+		pthread_mutex_destroy(&data->death_flag_mtx);
+		write(2, "Error: mutex init failed\n", 25);
+		return (ret);
+	}
+	data->philos_data = malloc(sizeof(t_philo) * data->rule_data.number_of_philo);
+	if (!data->philos_data)
+	{
+		pthread_mutex_destroy(&data->death_flag_mtx);
+		pthread_mutex_destroy(&data->all_ate_mtx);
+		write(2, "Error: malloc failed\n", 21);
+		return (1);
+	}
+	return (0);
 }
 
 void make_thread(t_data *data)
@@ -235,21 +279,11 @@ int main(int argc, char **argv)
 	int ret;
 
 	if (argc != 5 && argc != 6)
-		return (1);
+		return (0);
 	insert_rule(&data.rule_data, argc, argv);
-	ret = pthread_mutex_init(&data.death_flag_mtx, NULL);
+	ret = init_data(&data);
 	if (ret)
-	{
-		write(2, "Error: mutex init failed\n", 25);
 		return (ret);
-	}
-	data.death_flag = 0;
-	data.philos_data = malloc(sizeof(t_philo) * data.rule_data.number_of_philo);
-	if (!data.philos_data)
-	{
-		write(2, "Error: malloc failed\n", 21);
-		return (1);
-	}
 	make_thread(&data);
 	return (0);
 }
