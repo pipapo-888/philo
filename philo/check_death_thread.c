@@ -6,11 +6,23 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/09 16:33:20 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/09 17:19:59 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static int	is_dead_philo(t_data *data, int i)
+{
+	return (t_ms()
+		- data->philos_data[i].last_eat_time > data->rule_data.time_to_die);
+}
+
+static void	print_death(t_data *data, int i)
+{
+	printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
+		data->philos_data[i].id);
+}
 
 static int	is_all_ate(t_data *data)
 {
@@ -34,15 +46,13 @@ void	*check_death(void *arg)
 		while (i < data->rule_data.number_of_philo)
 		{
 			pthread_mutex_lock(&data->philos_data[i].eat_time);
-			if (t_ms()
-				- data->philos_data[i].last_eat_time > data->rule_data.time_to_die)
+			if (is_dead_philo(data, i))
 			{
 				pthread_mutex_unlock(&data->philos_data[i].eat_time);
 				pthread_mutex_lock(&data->death_flag_mtx);
 				data->death_flag = 1;
 				pthread_mutex_unlock(&data->death_flag_mtx);
-				printf("%ld %d died\n", t_ms() - data->rule_data.start_time,
-					data->philos_data[i].id);
+				print_death(data, i);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data->philos_data[i].eat_time);
