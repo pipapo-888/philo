@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/09 16:34:05 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/09 19:10:30 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,6 @@ void	*routine(void *arg)
 			p->last_eat_time = t_ms();
 			pthread_mutex_unlock(&p->eat_time);
 			usleep(rule.time_to_eat * 1000);
-			pthread_mutex_lock(&p->eat_time);
-			p->last_eat_time = t_ms();
-			pthread_mutex_unlock(&p->eat_time);
 			pthread_mutex_unlock(p->right_fork);
 			pthread_mutex_unlock(p->left_fork);
 			p->meal_count++;
@@ -102,9 +99,6 @@ void	*routine(void *arg)
 			p->last_eat_time = t_ms();
 			pthread_mutex_unlock(&p->eat_time);
 			usleep(rule.time_to_eat * 1000);
-			pthread_mutex_lock(&p->eat_time);
-			p->last_eat_time = t_ms();
-			pthread_mutex_unlock(&p->eat_time);
 			pthread_mutex_unlock(p->left_fork);
 			pthread_mutex_unlock(p->right_fork);
 			p->meal_count++;
