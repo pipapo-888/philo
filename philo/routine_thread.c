@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine_thread.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
+/*   Updated: 2026/04/09 16:34:05 by knomura          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 static int	is_dead(t_data *data)
@@ -9,7 +21,6 @@ static int	is_dead(t_data *data)
 	pthread_mutex_unlock(&data->death_flag_mtx);
 	return (flag);
 }
-
 
 void	*routine(void *arg)
 {

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   thread.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
+/*   Updated: 2026/04/09 16:33:15 by knomura          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 static void	destroy_forks_and_exit(t_data *data, int count, int status)
@@ -65,7 +77,6 @@ void	make_thread(t_data *data)
 	}
 	pthread_create(&data->thread, NULL, check_death, data);
 	pthread_join(data->thread, NULL);
-	
 	i = 0;
 	while (i < data->rule_data.number_of_philo)
 	{

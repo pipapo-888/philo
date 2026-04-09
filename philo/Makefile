@@ -4,7 +4,10 @@ CC		= cc
 CFLAGS	= -Wall -Wextra -Werror
 
 SRCS	= main.c \
-		  utils.c
+		  utils.c \
+		  thread.c \
+		  routine_thread.c \
+		  check_death_thread.c
 
 OBJS	= $(SRCS:.c=.o)
 
