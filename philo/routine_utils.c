@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/11 14:07:21 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/11 14:33:54 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/11 14:50:11 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,6 @@ static int	eat_meal(t_philo *p, t_data *data, t_rule rule)
 	pthread_mutex_lock(&p->eat_time);
 	p->last_eat_time = t_ms();
 	pthread_mutex_unlock(&p->eat_time);
-	usleep(rule.time_to_eat * 1000);
-	pthread_mutex_unlock(p->right_fork);
-	pthread_mutex_unlock(p->left_fork);
 	p->meal_count++;
 	if (p->meal_count == rule.number_of_times_each_philo_eat)
 	{
@@ -68,6 +65,9 @@ static int	eat_meal(t_philo *p, t_data *data, t_rule rule)
 		data->all_ate_count++;
 		pthread_mutex_unlock(&data->all_ate_mtx);
 	}
+	usleep(rule.time_to_eat * 1000);
+	pthread_mutex_unlock(p->right_fork);
+	pthread_mutex_unlock(p->left_fork);
 	return (0);
 }
 
