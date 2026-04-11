@@ -1,4 +1,5 @@
 a.out
 test
 philo/philo
+philo/philo_san
 philo/*.o
