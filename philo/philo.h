@@ -61,6 +61,7 @@ void				*check_death(void *arg);
 void				*routine(void *arg);
 int					make_thread(t_data *data);
 int					is_dead(t_data *data);
+int					is_all_eaten(t_data *data);
 int					do_cycle(t_philo *p, t_data *data, t_rule rule);
 
 #endif

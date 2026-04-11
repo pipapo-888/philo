@@ -6,7 +6,7 @@
 /*   By: knomura <knomura@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:45:08 by knomura           #+#    #+#             */
-/*   Updated: 2026/04/11 13:44:52 by knomura          ###   ########.fr       */
+/*   Updated: 2026/04/11 14:19:35 by knomura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,18 @@ int	is_dead(t_data *data)
 	flag = data->death_flag;
 	pthread_mutex_unlock(&data->death_flag_mtx);
 	return (flag);
+}
+
+int	is_all_eaten(t_data *data)
+{
+	int	count;
+
+	if (data->rule_data.number_of_times_each_philo_eat == -1)
+		return (0);
+	pthread_mutex_lock(&data->all_ate_mtx);
+	count = data->all_ate_count;
+	pthread_mutex_unlock(&data->all_ate_mtx);
+	return (count == data->rule_data.number_of_philo);
 }
 
 static void	routine_solo(t_philo *p, t_data *data, t_rule rule)
@@ -47,7 +59,7 @@ void	*routine(void *arg)
 	}
 	if (p->id % 2 == 0)
 		usleep(100);
-	while (!is_dead(data))
+	while (!is_dead(data) && !is_all_eaten(data))
 		if (do_cycle(p, data, rule))
 			return (NULL);
 	return (NULL);
